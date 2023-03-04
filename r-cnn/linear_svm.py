@@ -5,11 +5,23 @@ from torchsummary import summary
 
 from datasets import SVMDataset
 
+class HingeLoss(torch.nn.Module):
+    def __init__(self):
+        super(HingeLoss, self).__init__()
+        self.relu = nn.ReLU()
+
+    def forward(self, output, target):
+        all_ones = torch.ones_like(target)
+        labels = 2 * target - all_ones
+        losses = all_ones - torch.mul(output.squeeze(1), labels)
+
+        return torch.norm(self.relu(losses))
+
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # define hyperparameters
 batch_size = 32
-num_epochs = 20
+num_epochs = 10
 learning_rate = 0.001
 
 model = torch.load('finetuned_vgg16.pth')
@@ -21,7 +33,7 @@ train_dataset_SVM = SVMDataset(image_path='airplanes/train/images/', annot_path=
 train_loader_SVM = torch.utils.data.DataLoader(train_dataset_SVM, batch_size=batch_size, shuffle=True)
 
 # Replace last fully connected layer with new linear layer
-model.classifier[6] = nn.Linear(in_features = 4096, out_features = 2).to(device)
+model.classifier[6] = nn.Linear(in_features = 4096, out_features = 4096)
 model.classifier[6].requires_grad = True
 
 class Identity(nn.Module):
@@ -31,11 +43,15 @@ class Identity(nn.Module):
     def forward(self, x):
         return x
 
-model.classifier[7] = nn.Softmax()
+model.classifier[7] = nn.Sequential(nn.Linear(in_features = 4096, out_features = 2),
+                                    nn.Softmax())
+
+model.to(device)
 
 # Define optimizer and loss function
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-criterion = nn.HingeEmbeddingLoss()
+# criterion = HingeLoss()
+criterion = nn.BCELoss()
 
 # Train the model
 for epoch in range(num_epochs):
