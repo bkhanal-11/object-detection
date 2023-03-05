@@ -17,9 +17,9 @@ class ConvolutionalBlock(nn.Module):
 
         return x
 
-class DarknetBlock(nn.Module):
+class DarknetResidualBlock(nn.Module):
     def __init__(self, in_channels):
-        super(DarknetBlock, self).__init__()
+        super(DarknetResidualBlock, self).__init__()
 
         mid_channels = in_channels // 2
 
@@ -53,10 +53,11 @@ class Darknet53(nn.Module):
     def _make_layer(self, out_channels, num_blocks):
         layers = []
 
-        layers.append(ConvolutionalBlock(in_channels=out_channels//2, out_channels=out_channels, kernel_size=3, stride=2, padding=1))
+        layers.append(ConvolutionalBlock(in_channels=out_channels//2, out_channels=out_channels, 
+                                         kernel_size=3, stride=2, padding=1))
 
         for _ in range(num_blocks):
-            layers.append(DarknetBlock(out_channels))
+            layers.append(DarknetResidualBlock(out_channels))
 
         return nn.Sequential(*layers)
 
@@ -88,4 +89,4 @@ if __name__ == "__main__":
     # # Print the shape of the output
     # print(output.shape)
 
-    print(summary(model.to('cuda'), (3, 256, 256)))
+    print(summary(model.to('cuda'), (3, 416, 416)))
