@@ -2,7 +2,7 @@ import albumentations as A
 import cv2
 import torch
 from albumentations.pytorch import ToTensorV2
-from utils import seed_everything
+# from utils import seed_everything
 
 DATASET = 'PASCAL_VOC'
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -45,7 +45,7 @@ affine = A.OneOf(
                 A.ShiftScaleRotate(
                     rotate_limit=20, p=0.5, border_mode=cv2.BORDER_CONSTANT
                 ),
-                A.IAAAffine(shear=15, p=0.5, mode="constant"),
+                A.Affine(shear=15, p=0.5, mode="constant"),
             ],
             p=1.0,
         )

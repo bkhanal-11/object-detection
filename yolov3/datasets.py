@@ -6,7 +6,7 @@ import torch
 
 from PIL import Image, ImageFile
 from torch.utils.data import Dataset, DataLoader
-from utils.IoU import iou_width_height as iou
+from utils.iou import iou_width_height as iou
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 

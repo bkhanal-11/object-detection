@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from IoU import intersection_over_union
+from .iou import intersection_over_union
 
 class YoloLoss(nn.Module):
     def __init__(self):

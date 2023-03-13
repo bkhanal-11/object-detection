@@ -1,7 +1,7 @@
 from collections import Counter
 import torch
 
-from IoU import intersection_over_union
+from .iou import intersection_over_union
 
 def mean_average_precision(pred_boxes, true_boxes, iou_threshold=0.5, box_format="midpoint", num_classes=20):
     epsilon = 1e-6

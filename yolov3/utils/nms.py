@@ -1,6 +1,6 @@
 import torch
 
-from IoU import intersection_over_union
+from .iou import intersection_over_union
 
 def non_max_suppression(bboxes, iou_threshold, threshold, box_format="corners"):
     """
